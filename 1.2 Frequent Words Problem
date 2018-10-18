@@ -1,0 +1,45 @@
+#include <string>
+#include <iostream>                                                                                                                                                                                          
+#include <algorithm>
+#include <map> 
+using namespace std;
+
+int main() {
+	string put;
+	cin >> put;
+	int k;
+	cin >> k;
+
+	map<string, int> array;
+
+	for (int i = 0; i < put.length() - k; ++i) {
+		string substr = put.substr(i, k);
+
+		auto search = array.find(substr);
+
+		if (search != array.end()) {
+			search->second += 1;
+		}
+		else {
+			array[substr] = 1;
+		}
+	}
+
+	int max = 0;
+	for (auto &substr : array) {
+		if (max < substr.second) {
+			max = substr.second;
+		}
+	}
+
+	for (auto &substr : array) {
+		if (max == substr.second) {
+			cout << substr.first <<" ";
+		}
+	}
+
+
+	return 0;
+}
+
+	
