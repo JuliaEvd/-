@@ -1,0 +1,73 @@
+#include <iostream>
+#include <string>
+#include <map>
+#include <vector> 
+#include <algorithm>
+
+using namespace std;
+
+	map<char, int> Mass { {'G', 57},
+									{'A', 71},
+									{'S', 87},
+									{'P', 97},
+									{'V', 99},
+									{'T', 101},
+									{'C', 103},
+									{'I', 113},
+									{'L', 113},
+									{'N', 114},
+									{'D', 115},
+									{'K', 128},
+									{'Q', 128},
+									{'E', 129},
+									{'M', 131},
+									{'H', 137},
+									{'F', 147},
+									{'R', 156},
+									{'Y', 163},
+									{'W', 186} };
+
+	
+	int massPeptide(string pat) 
+	{
+		int mass = 0;
+		
+		for (int i = 0; i < pat.length(); i++) 
+        {
+            mass += Mass.at(pat[i]);
+        }
+		return mass;
+	}
+
+	int main() {
+
+		vector<int> mass { 0 };
+
+		string peptide;
+        string tmp;
+	
+		cin >> peptide;
+
+       
+		tmp = peptide;
+        tmp += peptide;
+		
+		for (int i = 1; i < peptide.length(); i++)
+		{
+			for (int j = 0; j < peptide.length(); j++)
+			{
+				mass.push_back(massPeptide(tmp.substr(j, i)));
+			}
+		}
+
+		mass.push_back(massPeptide(peptide));
+
+		sort(mass.begin(), mass.end());
+
+	    for (int i = 0; i < mass.size(); i++)
+		{
+			cout << mass[i] << " ";
+		}
+		
+		return 0;
+	}
