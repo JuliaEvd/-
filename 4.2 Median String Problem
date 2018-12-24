@@ -1,0 +1,103 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+#include <cmath>
+#include <limits>
+using namespace std;
+
+typedef vector<vector<string> > StringMatrix;
+
+unsigned hamming_distance(string & first, string & second);
+unsigned distance(string pattern, StringMatrix matrix_k_motifs);
+vector<string> get_brute_force_words(unsigned length);
+StringMatrix get_matrix_motif(vector<string> dna, unsigned length);
+
+int main(int argc, char** argv)
+{
+	unsigned k;
+	vector<string> dna;
+	cin >> k;
+	string temp_elem;
+	while (cin >> temp_elem) { dna.push_back(temp_elem); }
+
+
+	StringMatrix matrix_k_motifs = get_matrix_motif(dna, k);
+	vector<string> list_pattern = get_brute_force_words(k);
+	unsigned min_distance = numeric_limits<unsigned>::max();
+	string min_distance_pattern;
+	for (size_t i = 0; i < list_pattern.size(); i++)
+	{
+		unsigned current_distance = distance(list_pattern[i], matrix_k_motifs);
+		if (min_distance > current_distance)
+		{
+			min_distance = current_distance;
+			min_distance_pattern = list_pattern[i];
+		}
+	}
+
+	cout << min_distance_pattern <<endl;
+	return 0;
+}
+
+
+unsigned hamming_distance(string & first, string & second)
+{
+	unsigned result = 0;;
+	for (size_t i = 0; i < first.size(); i++)
+	{
+		if (first[i] != second[i]) { result++; }
+	}
+	return result;
+}
+
+unsigned distance(string pattern, StringMatrix matrix_k_motifs)
+{
+	unsigned result = 0;
+	for (size_t i = 0; i < matrix_k_motifs.size(); i++)
+	{
+		vector<unsigned> list_hamm_dist;
+		for (size_t j = 0; j < matrix_k_motifs[i].size(); j++)
+		{
+			list_hamm_dist.push_back(hamming_distance(matrix_k_motifs[i][j], pattern));
+		}
+		result += *min_element(list_hamm_dist.begin(), list_hamm_dist.end());
+	}
+	return result;
+}
+
+vector<string> get_brute_force_words(unsigned length)
+{
+	vector<string > list_pattern;
+	string symbols = "ACTG";
+	const unsigned total_words_count = pow(symbols.size(), length);
+	string word = "";
+	for (unsigned i = 0; i < length; i++) { word += "A"; }
+	for (unsigned i = 0; i < total_words_count; i++)
+	{
+		unsigned accum = i;
+		for (int j = word.size() - 1; j >= 0; j--)
+		{
+			word[j] = symbols[accum % symbols.size()];
+			accum /= symbols.size();
+		}
+		list_pattern.push_back(word);
+	}
+	return list_pattern;
+}
+
+StringMatrix get_matrix_motif(vector<string> dna, unsigned length)
+{
+	vector< vector<string> > matrix_k_motifs;
+	for (size_t i = 0; i < dna.size(); i++)
+	{
+		vector<string> temp_vector_k_motifs;
+		for (size_t j = 0; j < dna[i].size() - length + 1; j++)
+		{
+			string k_motif = dna[i].substr(j, length);
+			temp_vector_k_motifs.push_back(k_motif);
+		}
+		matrix_k_motifs.push_back(temp_vector_k_motifs);
+	}
+	return matrix_k_motifs;
+}
